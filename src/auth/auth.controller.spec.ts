@@ -8,6 +8,8 @@ describe('AuthController', () => {
 
   const mockAuthService = {
     attemptLogin: jest.fn(),
+    register: jest.fn(),
+    registerStudent: jest.fn(),
   } as any;
 
   beforeEach(async () => {
@@ -29,6 +31,20 @@ describe('AuthController', () => {
     const result = await controller.login({ email: 'a@b.com', password: 'password' } as any);
     expect(mockAuthService.attemptLogin).toHaveBeenCalledWith('a@b.com', 'password');
     expect(result).toEqual({ access_token: 'token' });
+  });
+
+  it('register should call service.register and return created user', async () => {
+    mockAuthService.register.mockResolvedValue({ id: 3, email: 'new@t.com' });
+    const result = await controller.register({ firstName: 'A', lastName: 'B', email: 'new@t.com', password: 'secret' } as any);
+    expect(mockAuthService.register).toHaveBeenCalledWith({ firstName: 'A', lastName: 'B', email: 'new@t.com', password: 'secret' });
+    expect(result).toEqual({ id: 3, email: 'new@t.com' });
+  });
+
+  it('registerStudent should call service.registerStudent and return created user', async () => {
+    mockAuthService.registerStudent.mockResolvedValue({ id: 4, email: 's@t.com' });
+    const result = await controller.registerStudent({ firstName: 'S', lastName: 'T', email: 's@t.com', password: 'pwd' } as any);
+    expect(mockAuthService.registerStudent).toHaveBeenCalledWith({ firstName: 'S', lastName: 'T', email: 's@t.com', password: 'pwd' });
+    expect(result).toEqual({ id: 4, email: 's@t.com' });
   });
 
   it('profile should return user attached to request', () => {

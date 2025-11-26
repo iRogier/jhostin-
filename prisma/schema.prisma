@@ -21,7 +21,8 @@ model Teacher {
   id             Int       @id @default(autoincrement()) @map("teacher_id")
   firstName      String    @db.VarChar(255) @map("first_name")
   lastName       String    @db.VarChar(255) @map("last_name")
-  email          String    @db.VarChar(255)
+  email          String    @db.VarChar(255) @unique
+  password       String?   @db.VarChar(255)
   phone          String?   @db.VarChar(50) @map("phone")
   specialtyId    Int?      @map("specialty_id")
   specialty      Specialty? @relation("SpecialtyTeachers", fields: [specialtyId], references: [id])
@@ -72,7 +73,8 @@ model Student {
   id         Int     @id @default(autoincrement()) @map("student_id")
   firstName  String  @db.VarChar(255) @map("first_name")
   lastName   String  @db.VarChar(255) @map("last_name")
-  email      String  @db.VarChar(255)
+  email      String  @db.VarChar(255) @unique
+  password   String? @db.VarChar(255)
   degreeId   Int?    @map("degree_id")
   cycleId    Int?    @map("cycle_id")
 

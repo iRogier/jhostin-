@@ -1,28 +1,72 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
   async validateUser(email: string, password: string) {
-    // For this project we validate users against the teachers table
-    // email is not a unique column in the current schema, use findFirst()
-    const teacher = await this.prisma.teacher.findFirst({ where: { email } });
-    if (!teacher) return null;
+    // Search teacher first
+    const teacher = await this.prisma.teacher.findUnique({ where: { email } });
+    if (teacher && teacher.password) {
+      const ok = await bcrypt.compare(password, teacher.password);
+      if (ok) return { id: teacher.id, email: teacher.email, role: 'teacher' as const };
+    }
 
-    // NOTE: current schema does not store passwords.
-    // For demo & tests we expect the password to be exactly "password". Change this logic
-    // to use hashed passwords if you add a password field to your model.
-    if (password !== 'password') return null;
+    // fallback to students
+    const student = await this.prisma.student.findUnique({ where: { email } });
+    if (student && student.password) {
+      const ok = await bcrypt.compare(password, student.password);
+      if (ok) return { id: student.id, email: student.email, role: 'student' as const };
+    }
 
-    // return a safe partial user object
-    return { id: teacher.id, email: teacher.email };
+    return null;
+  }
+
+  async register(dto: RegisterDto) {
+    // check if email exists
+    const existingTeacher = await this.prisma.teacher.findUnique({ where: { email: dto.email } });
+    const existingStudent = await this.prisma.student.findUnique({ where: { email: dto.email } });
+    if (existingTeacher || existingStudent) throw new ConflictException('Email already registered');
+
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const created = await this.prisma.teacher.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        email: dto.email,
+        password: hashed,
+      },
+    });
+
+    return { id: created.id, email: created.email };
+  }
+
+  async registerStudent(dto: RegisterDto) {
+    const existingTeacher = await this.prisma.teacher.findUnique({ where: { email: dto.email } });
+    const existingStudent = await this.prisma.student.findUnique({ where: { email: dto.email } });
+    if (existingTeacher || existingStudent) throw new ConflictException('Email already registered');
+
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const created = await this.prisma.student.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        email: dto.email,
+        password: hashed,
+      },
+    });
+
+    return { id: created.id, email: created.email };
   }
 
   async login(user: { id: number; email: string }) {
-    const payload = { sub: user.id, email: user.email };
+    // preserve role if present so JwtStrategy knows where to look
+    const payload: any = { sub: user.id, email: user.email };
+    if ((user as any).role) payload.role = (user as any).role;
     return { access_token: this.jwtService.sign(payload) };
   }
 

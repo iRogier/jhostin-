@@ -14,9 +14,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // attach minimal user info
-    const user = await this.prisma.teacher.findUnique({ where: { id: payload.sub } });
-    if (!user) return null;
-    return { id: user.id, email: user.email };
+    // attach minimal user info: check which role the token represents
+    if (payload.role === 'student') {
+      const student = await this.prisma.student.findUnique({ where: { id: payload.sub } });
+      if (!student) return null;
+      return { id: student.id, email: student.email, role: 'student' };
+    }
+
+    // default: teacher
+    const teacher = await this.prisma.teacher.findUnique({ where: { id: payload.sub } });
+    if (!teacher) return null;
+    return { id: teacher.id, email: teacher.email, role: 'teacher' };
   }
 }

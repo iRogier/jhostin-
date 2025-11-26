@@ -19,4 +19,8 @@ export class CreateStudentDto {
   @IsOptional()
   @IsInt()
   cycleId?: number;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
 }
