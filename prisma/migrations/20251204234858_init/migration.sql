@@ -61,6 +61,12 @@ CREATE TABLE "students" (
     CONSTRAINT "students_pkey" PRIMARY KEY ("student_id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "teachers_email_key" ON "teachers"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "students_email_key" ON "students"("email");
+
 -- AddForeignKey
 ALTER TABLE "teachers" ADD CONSTRAINT "teachers_specialty_id_fkey" FOREIGN KEY ("specialty_id") REFERENCES "specialties"("specialty_id") ON DELETE SET NULL ON UPDATE CASCADE;
 

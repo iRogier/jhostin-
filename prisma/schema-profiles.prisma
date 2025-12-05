@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-profiles"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model TeacherProfile {
+  id             Int       @id @map("teacher_id") // mismo ID que en Users y Academic
+  firstName      String    @db.VarChar(255) @map("first_name")
+  lastName       String    @db.VarChar(255) @map("last_name")
+  email          String    @db.VarChar(255) @unique
+  phone          String?   @db.VarChar(50)
+  bio            String?   @db.Text
+  avatar         String?   @db.VarChar(500)
+  specialtyId    Int?      @map("specialty_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("teacher_profiles")
+}
+
+model StudentProfile {
+  id         Int      @id @map("student_id") // mismo ID que en Users y Academic
+  firstName  String   @db.VarChar(255) @map("first_name")
+  lastName   String   @db.VarChar(255) @map("last_name")
+  email      String   @db.VarChar(255) @unique
+  bio        String?  @db.Text
+  avatar     String?  @db.VarChar(500)
+  degreeId   Int?     @map("degree_id")
+  cycleId    Int?     @map("cycle_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("student_profiles")
+}

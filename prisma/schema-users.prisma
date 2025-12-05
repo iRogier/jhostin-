@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-users"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model TeacherAuth {
+  id             Int       @id @default(autoincrement()) @map("teacher_id")
+  email          String    @db.VarChar(255) @unique
+  password       String    @db.VarChar(255)
+  role           String    @default("teacher") @db.VarChar(50)
+  isActive       Boolean   @default(true) @map("is_active")
+  lastLogin      DateTime? @map("last_login")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("teacher_auth")
+}
+
+model StudentAuth {
+  id         Int       @id @default(autoincrement()) @map("student_id")
+  email      String    @db.VarChar(255) @unique
+  password   String    @db.VarChar(255)
+  role       String    @default("student") @db.VarChar(50)
+  isActive   Boolean   @default(true) @map("is_active")
+  lastLogin  DateTime? @map("last_login")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@map("student_auth")
+}

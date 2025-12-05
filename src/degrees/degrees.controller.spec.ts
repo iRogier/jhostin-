@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DegreesController } from './degrees.controller';
 import { DegreesService } from './degrees.service';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('DegreesController', () => {
   let controller: DegreesController;

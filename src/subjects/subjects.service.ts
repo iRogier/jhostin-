@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaAcademicService } from '../prisma/prisma-academic.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 
 @Injectable()
 export class SubjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaAcademicService) { }
 
   findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;

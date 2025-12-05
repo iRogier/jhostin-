@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 // Simple in-memory mock for PrismaService focusing on teacher model used by auth
 class MockPrisma {

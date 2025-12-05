@@ -1,27 +1,20 @@
-import { Controller, Get, Post, Param, Query, Body, ParseIntPipe, Patch, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Body, ParseIntPipe, Patch, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { StudentsService } from './students.service';
-import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly service: StudentsService) {}
+  constructor(private readonly service: StudentsService) { }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-    return this.service.findAll(Number(page), Number(limit));
+  findAll() {
+    return this.service.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
-  }
-
-  @Post()
-  create(@Body() dto: CreateStudentDto) {
-    return this.service.create(dto);
   }
 
   @Patch(':id')
