@@ -7,6 +7,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  FAILED
+}
 
 model Specialty {
   id          Int      @id @default(autoincrement()) @map("specialty_id")
@@ -19,15 +31,17 @@ model Specialty {
 }
 
 model Teacher {
-  id             Int       @id @default(autoincrement()) @map("teacher_id")
-  firstName      String    @db.VarChar(255) @map("first_name")
-  lastName       String    @db.VarChar(255) @map("last_name")
-  email          String    @db.VarChar(255) @unique
-  phone          String?   @db.VarChar(50) @map("phone")
-  specialtyId    Int?      @map("specialty_id")
-  specialty      Specialty? @relation("SpecialtyTeachers", fields: [specialtyId], references: [id])
-
-  subjects       Subject[]  @relation("TeacherSubjects")
+  id             Int            @id @default(autoincrement()) @map("teacher_id")
+  firstName      String         @db.VarChar(255) @map("first_name")
+  lastName       String         @db.VarChar(255) @map("last_name")
+  email          String         @db.VarChar(255) @unique
+  phone          String?        @db.VarChar(50) @map("phone")
+  specialtyId    Int?           @map("specialty_id")
+  employmentType EmploymentType @default(FULL_TIME) @map("employment_type")
+  isActive       Boolean        @default(true) @map("is_active")
+  
+  specialty      Specialty?     @relation("SpecialtyTeachers", fields: [specialtyId], references: [id])
+  subjects       Subject[]      @relation("TeacherSubjects")
 
   @@map("teachers")
 }
@@ -55,30 +69,50 @@ model Cycle {
 }
 
 model Subject {
-  id          Int     @id @default(autoincrement()) @map("subject_id")
-  name        String  @db.VarChar(255)
-  description String? @db.Text
-  teacherId   Int?    @map("teacher_id")
-  degreeId    Int?    @map("degree_id")
-  cycleId     Int?    @map("cycle_id")
+  id             Int          @id @default(autoincrement()) @map("subject_id")
+  name           String       @db.VarChar(255)
+  description    String?      @db.Text
+  teacherId      Int?         @map("teacher_id")
+  degreeId       Int?         @map("degree_id")
+  cycleId        Int?         @map("cycle_id")
+  maxSlots       Int          @default(30) @map("max_slots")
+  availableSlots Int          @default(30) @map("available_slots")
 
-  teacher     Teacher? @relation("TeacherSubjects", fields: [teacherId], references: [id])
-  degree      Degree?  @relation(fields: [degreeId], references: [id])
-  cycle       Cycle?   @relation(fields: [cycleId], references: [id])
+  teacher        Teacher?     @relation("TeacherSubjects", fields: [teacherId], references: [id])
+  degree         Degree?      @relation(fields: [degreeId], references: [id])
+  cycle          Cycle?       @relation(fields: [cycleId], references: [id])
+  enrollments    Enrollment[]
 
   @@map("subjects")
 }
 
 model Student {
-  id         Int     @id @default(autoincrement()) @map("student_id")
-  firstName  String  @db.VarChar(255) @map("first_name")
-  lastName   String  @db.VarChar(255) @map("last_name")
-  email      String  @db.VarChar(255) @unique
-  degreeId   Int?    @map("degree_id")
-  cycleId    Int?    @map("cycle_id")
+  id          Int          @id @default(autoincrement()) @map("student_id")
+  firstName   String       @db.VarChar(255) @map("first_name")
+  lastName    String       @db.VarChar(255) @map("last_name")
+  email       String       @db.VarChar(255) @unique
+  degreeId    Int?         @map("degree_id")
+  cycleId     Int?         @map("cycle_id")
+  isActive    Boolean      @default(true) @map("is_active")
 
-  degree     Degree? @relation(fields: [degreeId], references: [id])
-  cycle      Cycle?  @relation(fields: [cycleId], references: [id])
+  degree      Degree?      @relation(fields: [degreeId], references: [id])
+  cycle       Cycle?       @relation(fields: [cycleId], references: [id])
+  enrollments Enrollment[]
 
   @@map("students")
+}
+
+model Enrollment {
+  id             Int              @id @default(autoincrement()) @map("enrollment_id")
+  studentId      Int              @map("student_id")
+  subjectId      Int              @map("subject_id")
+  academicPeriod String           @db.VarChar(50) @map("academic_period")
+  enrollmentDate DateTime         @default(now()) @map("enrollment_date")
+  status         EnrollmentStatus @default(ACTIVE)
+  
+  student        Student          @relation(fields: [studentId], references: [id])
+  subject        Subject          @relation(fields: [subjectId], references: [id])
+
+  @@unique([studentId, subjectId, academicPeriod])
+  @@map("enrollments")
 }

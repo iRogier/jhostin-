@@ -11,13 +11,27 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProfilesModule } from './profiles/profiles.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-    envFilePath: '.env',
-  }),
-    PrismaModule, StudentsModule, SpecialtiesModule, TeachersModule, DegreesModule, CyclesModule, SubjectsModule, AuthModule, ProfilesModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PrismaModule,
+    StudentsModule,
+    SpecialtiesModule,
+    TeachersModule,
+    DegreesModule,
+    CyclesModule,
+    SubjectsModule,
+    AuthModule,
+    ProfilesModule,
+    EnrollmentsModule,
+    ReportsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

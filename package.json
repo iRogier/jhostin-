@@ -25,6 +25,7 @@
     "prisma:migrate:academic": "prisma migrate dev --config=prisma-academic.config.ts",
     "prisma:migrate:profiles": "prisma migrate dev --config=prisma-profiles.config.ts",
     "prisma:migrate:users": "prisma migrate dev --config=prisma-users.config.ts",
+    "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:studio:academic": "prisma studio --config=prisma-academic.config.ts",
     "prisma:studio:profiles": "prisma studio --config=prisma-profiles.config.ts",
     "prisma:studio:users": "prisma studio --config=prisma-users.config.ts"
