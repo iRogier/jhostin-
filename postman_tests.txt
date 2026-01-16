@@ -1,0 +1,50 @@
+# Colección de Pruebas para API Universitaria
+# Importa estas URLs y payloads en Postman o usa cURL
+
+### 1. Estudiantes Activos con Grado (Consulta Derivada)
+# Descripción: Obtiene estudiantes activos e incluye la información de su grado académico.
+GET http://localhost:3000/students/active-with-degree
+
+### 2. Estadísticas de Inscripción (Consulta Nativa SQL)
+# Descripción: Reporte generado con SQL nativo que muestra el conteo de materias por estudiante.
+GET http://localhost:3000/reports/enrollment-statistics
+
+### 3. Profesores con Múltiples Materias (Lógica de Negocio)
+# Descripción: Filtra profesores que dictan más de una materia (threshold=1 por defecto).
+# Nota: Puedes probar con ?threshold=2 para filtrar más estrictamente.
+GET http://localhost:3000/teachers/multiple-subjects?threshold=1
+
+### 4. Búsqueda Avanzada de Estudiantes (Operadores Lógicos)
+# Descripción: Busca estudiantes combinando múltiples criterios (AND/OR).
+# Body: JSON
+POST http://localhost:3000/students/filter
+Content-Type: application/json
+
+{
+    "degreeId": 1,
+    "isActive": true,
+    "minEnrollments": 1
+}
+
+### 5. Crear Inscripción (Transacción ACID)
+# Descripción: Inscribe a un estudiante en una materia de forma transaccional.
+# Nota: Asegúrate de usar IDs válidos que existan en tu seed (ej. Student ID 1, Subject ID 2).
+POST http://localhost:3000/enrollments
+Content-Type: application/json
+
+{
+    "studentId": 1,
+    "subjectId": 2,
+    "academicPeriod": "2024-1"
+}
+
+### 6. Búsqueda Avanzada de Profesores
+# Descripción: Filtra profesores activos que tienen asignaturas asignadas.
+# Body: JSON
+POST http://localhost:3000/teachers/filter
+Content-Type: application/json
+
+{
+    "isActive": true,
+    "hasSubjects": true
+}

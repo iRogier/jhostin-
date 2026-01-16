@@ -12,10 +12,10 @@ CREATE TYPE "EmploymentType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CONTRACT');
 CREATE TYPE "EnrollmentStatus" AS ENUM ('ACTIVE', 'COMPLETED', 'DROPPED', 'FAILED');
 
 -- DropTable
-DROP TABLE "student_profiles";
+-- DROP TABLE "student_profiles";
 
 -- DropTable
-DROP TABLE "teacher_profiles";
+-- DROP TABLE "teacher_profiles";
 
 -- CreateTable
 CREATE TABLE "specialties" (
